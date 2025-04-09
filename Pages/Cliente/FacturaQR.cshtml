@@ -1,0 +1,44 @@
+﻿
+@{
+    ViewData["Title"] = "Factura de Compra";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h2 class="text-center mb-0">FACTURA DE COMPRA</h2>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4><i class="fas fa-gamepad"></i> Producto: @ViewBag.Videojuego.Titulo</h4>
+                    <h5>Precio: $@ViewBag.Videojuego.Precio.ToString("0.00")</h5>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <img src="data:image/png;base64,@ViewBag.QRImage"
+                     alt="Código QR"
+                     style="max-width: 200px;">
+                <p class="mt-2">Escanea este código para validar tu compra</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Estilos adicionales para asegurar el color negro */
+        .card-body {
+            color: #000 !important;
+        }
+        .card-body h4,
+        .card-body h5,
+        .card-body p {
+            color: #000 !important;
+        }
+    </style>
+}

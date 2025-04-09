@@ -1,0 +1,95 @@
+﻿@page
+@model VideojuegosStore.Pages.Cliente.Resena.IndexModel
+@{
+    ViewData["Title"] = "Mis Reseñas";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-star me-2"></i>Mis Reseñas</h2>
+        <a href="/Cliente/Index" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left me-1"></i> Volver al catálogo
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (Model.Reseñas.Count == 0)
+    {
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>No has realizado ninguna reseña todavía.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var reseña in Model.Reseñas)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-light">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">@reseña.Videojuego.Titulo</h5>
+                                <div class="rating-display">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <i class="fas fa-star @(i <= reseña.Calificacion ? "text-warning" : "text-secondary")"></i>
+                                    }
+                                </div>
+                            </div>
+                            <small class="text-muted">@reseña.Fecha.ToString("dd/MM/yyyy")</small>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">@reseña.Comentario</p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex justify-content-end gap-2">
+                                <a href="/Cliente/Resena/Edit/@reseña.Id" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit me-1"></i> Editar
+                                </a>
+                                <a href="/Cliente/Resena/Delete/@reseña.Id" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash me-1"></i> Eliminar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Styles {
+    <style>
+        .rating-display {
+            font-size: 1.2rem;
+        }
+
+        <style >
+        .rating-display {
+            font-size: 1.2rem;
+        }
+
+        /* Asegura que el h5 del título en el header tenga color negro */
+        .card-header h5 {
+            color: #000 !important;
+        }
+
+        /* También por si el fondo fuera oscuro, refuerza el fondo claro */
+        .card-header.bg-light {
+            background-color: #f8f9fa !important;
+        }
+
+        /* Opcional: cambia el color del texto en la fecha */
+        .card-header .text-muted {
+            color: #6c757d;
+        }
+    </style>
+    </style>
+}

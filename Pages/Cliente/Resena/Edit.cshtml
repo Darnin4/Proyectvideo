@@ -1,0 +1,62 @@
+﻿@page "/Cliente/Resena/Edit/{id}"
+@model VideojuegosStore.Pages.Cliente.Resena.EditModel
+@{
+    ViewData["Title"] = "Editar Reseña";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title">
+                        <i class="fas fa-edit me-2"></i>Editar Reseña para @Model.ReseñaOriginal.Videojuego.Titulo
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Calificación</label>
+                            <div class="rating">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <input type="radio" asp-for="Reseña.Calificacion" value="@i" id="rating-@i" />
+                                    <label for="rating-@i"><i class="fas fa-star"></i></label>
+                                }
+                            </div>
+                            <span asp-validation-for="Reseña.Calificacion" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Reseña.Comentario" class="form-label">Comentario</label>
+                            <textarea asp-for="Reseña.Comentario" class="form-control" rows="5"></textarea>
+                            <span asp-validation-for="Reseña.Comentario" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-page="./Index" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-arrow-left me-1"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Seleccionar la calificación actual al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentRating = @Model.Reseña.Calificacion;
+            if (currentRating > 0) {
+                document.getElementById(`rating-${currentRating}`).checked = true;
+            }
+        });
+    </script>
+}

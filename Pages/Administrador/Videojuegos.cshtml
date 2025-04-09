@@ -1,0 +1,89 @@
+﻿@page
+@model VideojuegosStore.Pages.Administrador.VideojuegosModel
+@{
+    ViewData["Title"] = "Lista de Videojuegos";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <a asp-page="VideoCreate" class="btn btn-primary">Agregar Nuevo Videojuego</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Imagen</th>
+            <th>Título</th>
+            <th>Género</th>
+            <th>Plataforma</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody id="videojuegosTable">
+        <!-- Los datos se cargarán vía AJAX -->
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            cargarVideojuegos();
+        });
+
+        function cargarVideojuegos() {
+            $.ajax({
+                url: '/api/Videojuegos',
+                type: 'GET',
+                success: function(data) {
+                    $('#videojuegosTable').empty();
+                    data.forEach(function(videojuego) {
+                        $('#videojuegosTable').append(`
+                            <tr>
+                                <td><img src="${videojuego.imagenUrl || '/images/placeholder.png'}" alt="${videojuego.titulo}" width="50" height="75" /></td>
+                                <td>${videojuego.titulo}</td>
+                                <td>${videojuego.genero}</td>
+                                <td>${videojuego.plataforma}</td>
+                                <td>$${videojuego.precio.toFixed(2)}</td>
+                                <td>${videojuego.stock}</td>
+                                <td>
+                                    <a href="/Administrador/EditarVideojuego/${videojuego.id}" class="btn btn-sm btn-warning">Editar</a>
+                                    <button onclick="eliminarVideojuego('${videojuego.id}')" class="btn btn-sm btn-danger">Eliminar</button>
+                                </td>
+                            </tr>
+                        `);
+                    });
+                },
+                error: function(error) {
+                    console.error('Error al cargar:', error);
+                    alert('Error al cargar videojuegos');
+                }
+            });
+        }
+
+        function eliminarVideojuego(id) {
+            if (confirm('¿Estás seguro de eliminar este videojuego?')) {
+                // Obtener el token anti-falsificación
+                const token = $('input[name="__RequestVerificationToken"]').val();
+
+                $.ajax({
+                    url: `/api/Videojuegos/${id}`,
+                    type: 'DELETE',
+                    headers: {
+                        'RequestVerificationToken': token
+                    },
+                    success: function() {
+                        cargarVideojuegos();
+                        alert('Videojuego eliminado correctamente');
+                    },
+                    error: function(error) {
+                        console.error('Error al eliminar:', error);
+                        alert(`Error al eliminar videojuego: ${error.responseText || 'Error desconocido'}`);
+                    }
+                });
+            }
+        }
+    </script>
+}

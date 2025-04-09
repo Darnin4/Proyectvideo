@@ -1,0 +1,44 @@
+﻿@page "/Cliente/Resena/Delete/{id}"
+@model VideojuegosStore.Pages.Cliente.Resena.DeleteModel
+@{
+    ViewData["Title"] = "Eliminar Reseña";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="card-title">
+                        <i class="fas fa-trash-alt me-2"></i>Eliminar Reseña
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <h4>¿Estás seguro que deseas eliminar esta reseña?</h4>
+                    <div class="alert alert-warning mt-3">
+                        <strong>Videojuego:</strong> @Model.Reseña.Videojuego.Titulo<br>
+                        <strong>Calificación:</strong>
+                        <span class="rating-display">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <i class="fas fa-star @(i <= Model.Reseña.Calificacion ? "text-warning" : "text-secondary")"></i>
+                            }
+                        </span><br>
+                        <strong>Comentario:</strong> @Model.Reseña.Comentario
+                    </div>
+
+                    <form method="post">
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                            <a asp-page="./Index" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-arrow-left me-1"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash-alt me-1"></i> Confirmar Eliminación
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

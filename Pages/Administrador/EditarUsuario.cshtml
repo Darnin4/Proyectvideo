@@ -1,0 +1,274 @@
+﻿@page "{id:int}"
+@model VideojuegosStore.Pages.Administrador.EditarUsuarioModel
+@{
+    ViewData["Title"] = "Editar Usuario";
+}
+
+<style>
+    /* Estilos específicos para el formulario de edición */
+    .edit-form-container {
+        background-color: rgba(26, 26, 46, 0.9);
+        backdrop-filter: blur(5px);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-top: 2rem;
+        box-shadow: 0 0 20px rgba(106, 13, 173, 0.5);
+        border: 1px solid var(--neon-blue);
+    }
+
+    .edit-title {
+        color: var(--neon-blue);
+        text-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
+        margin-bottom: 1.5rem;
+        font-weight: bold;
+        text-align: center;
+        position: relative;
+    }
+
+        .edit-title::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--gamer-purple));
+            margin: 0.5rem auto 0;
+            border-radius: 3px;
+        }
+
+    .form-label {
+        color: var(--neon-blue);
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .form-control, .form-select {
+        background-color: rgba(26, 26, 46, 0.7);
+        border: 1px solid var(--gamer-purple);
+        color: white;
+        transition: all 0.3s;
+        margin-bottom: 1rem;
+    }
+
+        .form-control:focus, .form-select:focus {
+            background-color: rgba(26, 26, 46, 0.9);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            color: white;
+        }
+
+    .password-container {
+        position: relative;
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 10px;
+        top: 35px;
+        cursor: pointer;
+        color: var(--neon-blue);
+        transition: all 0.3s;
+    }
+
+        .toggle-password:hover {
+            color: var(--neon-red);
+        }
+
+    .form-text {
+        color: #aaa !important;
+        font-size: 0.85rem;
+        margin-top: -0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .btn-save {
+        background-color: var(--gamer-purple);
+        border: none;
+        font-weight: bold;
+        transition: all 0.3s;
+        margin-right: 10px;
+        min-width: 120px;
+    }
+
+        .btn-save:hover {
+            background-color: var(--neon-blue);
+            color: #000;
+            box-shadow: 0 0 15px var(--neon-blue);
+            transform: translateY(-2px);
+        }
+
+    .btn-cancel {
+        background-color: #333;
+        border: none;
+        font-weight: bold;
+        transition: all 0.3s;
+        min-width: 120px;
+    }
+
+        .btn-cancel:hover {
+            background-color: var(--neon-red);
+            box-shadow: 0 0 15px var(--neon-red);
+            transform: translateY(-2px);
+        }
+
+    .btn-group {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 2rem;
+    }
+
+    /* Estilo para el ID del usuario */
+    .user-id-badge {
+        background-color: var(--gamer-purple);
+        color: white;
+        padding: 3px 8px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        margin-left: 10px;
+    }
+</style>
+
+<div class="container edit-form-container">
+    <h1 class="edit-title">
+        <i class="fas fa-user-edit me-2"></i>Editar Usuario
+        <span class="user-id-badge">ID: @Model.Usuario.Id</span>
+    </h1>
+
+    <form id="editForm">
+        <input type="hidden" id="usuarioId" asp-for="Usuario.Id" />
+
+        <div class="mb-3">
+            <label class="form-label">
+                <i class="fas fa-user me-2"></i>Nombre
+            </label>
+            <input id="nombre" class="form-control" asp-for="Usuario.Nombre" placeholder="Nombre completo del usuario" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">
+                <i class="fas fa-envelope me-2"></i>Correo Electrónico
+            </label>
+            <input id="correo" class="form-control" asp-for="Usuario.Correo" placeholder="correo@ejemplo.com" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">
+                <i class="fas fa-user-tag me-2"></i>Rol
+            </label>
+            <select id="rol" class="form-select" asp-for="Usuario.Rol">
+                <option value="Administrador">Administrador</option>
+                <option value="Cliente">Cliente</option>
+            </select>
+        </div>
+
+        <div class="mb-3 password-container">
+            <label class="form-label">
+                <i class="fas fa-lock me-2"></i>Contraseña
+            </label>
+            <input id="contraseña" type="password" class="form-control" placeholder="Dejar en blanco para no cambiar" />
+            <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility()"></i>
+            <small class="form-text">Edita este campo solo si deseas cambiar la contraseña</small>
+        </div>
+
+        <div class="btn-group">
+            <button type="button" onclick="guardarCambios()" class="btn btn-save">
+                <i class="fas fa-save me-2"></i>Guardar
+            </button>
+            <a asp-page="/Administrador/Usuarios" class="btn btn-cancel">
+                <i class="fas fa-times me-2"></i>Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Cargar datos del usuario incluyendo la contraseña
+            $.ajax({
+                url: '/api/Usuario/' + $('#usuarioId').val(),
+                type: 'GET',
+                success: function(data) {
+                    $('#nombre').val(data.nombre);
+                    $('#correo').val(data.correo);
+                    $('#rol').val(data.rol);
+                    $('#contraseña').val(data.contraseña);
+
+                    // Mostrar feedback visual de carga exitosa
+                    $('.edit-form-container').css('box-shadow', '0 0 20px rgba(0, 255, 0, 0.5)');
+                    setTimeout(() => {
+                        $('.edit-form-container').css('box-shadow', '0 0 20px rgba(106, 13, 173, 0.5)');
+                    }, 1000);
+                },
+                error: function() {
+                    // Mostrar feedback visual de error
+                    $('.edit-form-container').css('box-shadow', '0 0 20px rgba(255, 0, 0, 0.5)');
+                    setTimeout(() => {
+                        $('.edit-form-container').css('box-shadow', '0 0 20px rgba(106, 13, 173, 0.5)');
+                    }, 1000);
+                }
+            });
+        });
+
+        function togglePasswordVisibility() {
+            const passwordField = $('#contraseña');
+            const icon = $('.toggle-password');
+
+            if (passwordField.attr('type') === 'password') {
+                passwordField.attr('type', 'text');
+                icon.removeClass('fa-eye').addClass('fa-eye-slash');
+            } else {
+                passwordField.attr('type', 'password');
+                icon.removeClass('fa-eye-slash').addClass('fa-eye');
+            }
+        }
+
+        function guardarCambios() {
+            const usuario = {
+                Id: $('#usuarioId').val(),
+                Nombre: $('#nombre').val(),
+                Correo: $('#correo').val(),
+                Rol: $('#rol').val(),
+                Contraseña: $('#contraseña').val()
+            };
+
+            // Validación básica
+            if (!usuario.Nombre || !usuario.Correo) {
+                alert("Nombre y correo son campos obligatorios");
+                return;
+            }
+
+            // Mostrar feedback visual de guardado
+            $('.btn-save').html('<i class="fas fa-spinner fa-spin me-2"></i>Guardando...');
+            $('.btn-save').prop('disabled', true);
+            $('.btn-cancel').prop('disabled', true);
+
+            $.ajax({
+                url: '/api/Usuario/' + usuario.Id,
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(usuario),
+                success: function() {
+                    // Feedback visual de éxito
+                    $('.edit-form-container').css('box-shadow', '0 0 25px rgba(0, 255, 0, 0.7)');
+                    $('.btn-save').html('<i class="fas fa-check me-2"></i>Guardado!');
+
+                    setTimeout(() => {
+                        window.location.href = '/Administrador/Usuarios';
+                    }, 1000);
+                },
+                error: function(xhr) {
+                    // Feedback visual de error
+                    $('.edit-form-container').css('box-shadow', '0 0 25px rgba(255, 0, 0, 0.7)');
+                    $('.btn-save').html('<i class="fas fa-save me-2"></i>Guardar');
+                    $('.btn-save').prop('disabled', false);
+                    $('.btn-cancel').prop('disabled', false);
+
+                    alert("Error al actualizar: " + (xhr.responseJSON?.message || xhr.responseText || "Error desconocido"));
+                }
+            });
+        }
+    </script>
+}

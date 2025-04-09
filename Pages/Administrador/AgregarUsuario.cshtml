@@ -1,0 +1,119 @@
+﻿@page
+@model VideojuegosStore.Pages.Administrador.AgregarUsuarioModel
+@{
+    ViewData["Title"] = "Agregar Nuevo Usuario";
+}
+
+<div class="admin-form-container">
+    <h2 class="form-title neon-title">
+        <i class="fas fa-user-plus me-2"></i>@ViewData["Title"]
+    </h2>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <form method="post" class="neon-form">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4"></div>
+
+                <div class="mb-4">
+                    <label asp-for="Usuario.Nombre" class="form-label">
+                        <i class="fas fa-user me-2"></i>Nombre Completo
+                    </label>
+                    <input asp-for="Usuario.Nombre" class="form-control" placeholder="Ingrese el nombre completo" />
+                    <span asp-validation-for="Usuario.Nombre" class="text-danger mt-1 d-block"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Usuario.Correo" class="form-label">
+                        <i class="fas fa-envelope me-2"></i>Correo Electrónico
+                    </label>
+                    <input asp-for="Usuario.Correo" class="form-control" id="correo" placeholder="ejemplo@dominio.com" />
+                    <span asp-validation-for="Usuario.Correo" class="text-danger mt-1 d-block" id="correoError"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Usuario.Contraseña" class="form-label">
+                        <i class="fas fa-lock me-2"></i>Contraseña
+                    </label>
+                    <input asp-for="Usuario.Contraseña" type="password" class="form-control" placeholder="Mínimo 6 caracteres" />
+                    <span asp-validation-for="Usuario.Contraseña" class="text-danger mt-1 d-block"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Usuario.Rol" class="form-label">
+                        <i class="fas fa-user-tag me-2"></i>Rol
+                    </label>
+                    <select asp-for="Usuario.Rol" class="form-select">
+                        <option value="">Seleccione un rol...</option>
+                        <option value="Cliente">Cliente</option>
+                        <option value="Administrador">Administrador</option>
+                    </select>
+                    <span asp-validation-for="Usuario.Rol" class="text-danger mt-1 d-block"></span>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="submit" class="btn btn-submit">
+                        <i class="fas fa-user-plus me-2"></i>Registrar Usuario
+                    </button>
+                    <a asp-page="Usuarios" class="btn btn-cancel">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function() {
+            // Validación asíncrona del correo con mejor feedback visual
+            $('#correo').on('blur', function() {
+                var correo = $(this).val();
+                var correoError = $('#correoError');
+
+                if (correo.length > 0) {
+                    $(this).addClass('is-validating');
+
+                    $.get('/api/Usuario/VerificarCorreo', { correo: correo }, function(existe) {
+                        if (existe) {
+                            correoError.text('Ya existe un usuario con este correo electrónico');
+                            $('#correo').addClass('is-invalid');
+                            $('#correo').removeClass('is-valid');
+                        } else {
+                            correoError.text('');
+                            $('#correo').removeClass('is-invalid');
+                            $('#correo').addClass('is-valid');
+                        }
+                    }).fail(function() {
+                        correoError.text('Error al verificar el correo. Intente nuevamente.');
+                    }).always(function() {
+                        $('#correo').removeClass('is-validating');
+                    });
+                } else {
+                    correoError.text('');
+                    $('#correo').removeClass('is-invalid is-valid');
+                }
+            });
+
+            // Efecto visual para campos válidos
+            $.validator.setDefaults({
+                highlight: function(element) {
+                    $(element).addClass('is-invalid').removeClass('is-valid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid').addClass('is-valid');
+                },
+                errorElement: 'span',
+                errorClass: 'text-danger',
+                errorPlacement: function(error, element) {
+                    error.addClass('mt-1 d-block');
+                    error.insertAfter(element);
+                }
+            });
+        });
+    </script>
+}

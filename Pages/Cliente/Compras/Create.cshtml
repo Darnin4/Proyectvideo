@@ -1,0 +1,279 @@
+﻿@page
+@model VideojuegosStore.Pages.Cliente.Compras.CreateModel
+@{
+    ViewData["Title"] = "Realizar Compra";
+}
+
+<div class="container mt-4">
+    <h2><i class="fas fa-shopping-cart me-2"></i>Realizar Compra</h2>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Detalles del Videojuego</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Videojuego != null)
+                    {
+                        <div class="text-center mb-3">
+                            <img src="@Model.Videojuego.ImagenUrl" alt="@Model.Videojuego.Titulo" class="img-fluid rounded" style="max-height: 200px;">
+                        </div>
+                        <h4>@Model.Videojuego.Titulo</h4>
+                        <p><strong>Género:</strong> @Model.Videojuego.Genero</p>
+                        <p><strong>Plataforma:</strong> @Model.Videojuego.Plataforma</p>
+                        <p><strong>Precio:</strong> @Model.Videojuego.Precio.ToString("C")</p>
+                        <p><strong>Stock disponible:</strong> @Model.Videojuego.Stock</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Resumen de Compra</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        @for (int i = 0; i < Model.Compra.Items.Count; i++)
+                        {
+                            <input type="hidden" asp-for="Compra.Items[i].VideojuegoId" />
+                            <input type="hidden" asp-for="Compra.Items[i].PrecioUnitario" value="@Model.Compra.Items[i].PrecioUnitario" />
+
+                            <div class="mb-3">
+                                <input type="hidden" asp-for="Compra.Items[i].PrecioUnitario" />
+                                <input asp-for="Compra.Items[i].Cantidad" class="form-control" />
+                            </div>
+
+                            <div class="mb-3">
+                                <p><strong>Subtotal:</strong> <span>@Model.Compra.Items[i].Subtotal.ToString("C")</span></p>
+                            </div>
+                        }
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check me-1"></i> Confirmar Compra
+                            </button>
+                            <a href="/Cliente/Videojuegos" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-1"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function() {
+            $('input[name$="Cantidad"]').on('input', function() {
+                // Encuentra la fila actual
+                var row = $(this).closest('.mb-3').parent();
+
+                // Obtiene cantidad (asegurando que sea número)
+                var cantidad = parseInt($(this).val()) || 0;
+
+                // Obtiene el precio del campo oculto en la misma fila
+                var precio = parseFloat(row.find('input[name$="PrecioUnitario"]').val()) || 0;
+
+                // Calcula el subtotal
+                var subtotal = cantidad * precio;
+
+                // Actualiza el texto del subtotal
+                row.find('p strong:contains("Subtotal:")').next().text('$' + subtotal.toFixed(2));
+            }).trigger('input'); // Ejecuta al cargar para valores iniciales
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #000; /* Texto negro */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        /* Encabezados */
+        h2 {
+            color: #000;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #28a745;
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        h4 {
+            color: #000;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        h5 {
+            color: #fff !important; /* Mantenemos blanco solo para los headers de las cards */
+            font-weight: 500;
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+
+        .card-header {
+            padding: 1rem 1.5rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+            color: #000; /* Texto negro en el cuerpo */
+        }
+
+        /* Textos */
+        p {
+            color: #000;
+            margin-bottom: 0.5rem;
+        }
+
+        strong {
+            color: #000;
+            font-weight: 600;
+        }
+
+        /* Formulario */
+        .form-label {
+            color: #000;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            padding: 0.5rem 0.75rem;
+            color: #000;
+            background-color: #fff;
+        }
+
+            .form-control:focus {
+                border-color: #28a745;
+                box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+            }
+
+        /* Botones */
+        .btn {
+            border-radius: 5px;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+            .btn-primary:hover {
+                background-color: #0069d9;
+                border-color: #0062cc;
+            }
+
+        .btn-outline-secondary {
+            border-color: #6c757d;
+            color: #6c757d;
+        }
+
+            .btn-outline-secondary:hover {
+                background-color: #6c757d;
+                color: #fff;
+            }
+
+        /* Validación */
+        .text-danger {
+            color: #dc3545 !important;
+        }
+
+        /* Imagen */
+        .img-fluid {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Grid y layout */
+        .row {
+            margin-bottom: 2rem;
+        }
+
+        /* Efectos hover para mejor interactividad */
+        .btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+            .btn:after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 5px;
+                height: 5px;
+                background: rgba(255, 255, 255, 0.5);
+                opacity: 0;
+                border-radius: 100%;
+                transform: scale(1, 1) translate(-50%);
+                transform-origin: 50% 50%;
+            }
+
+            .btn:focus:not(:active)::after {
+                animation: ripple 1s ease-out;
+            }
+
+        @@keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
+        }
+
+        /* Responsividad */
+        @@media (max-width: 768px) {
+            .col-md-6 {
+                margin-bottom: 1.5rem;
+            }
+
+            .card-body {
+                padding: 1rem;
+            }
+        }
+   
+    </style>
+}

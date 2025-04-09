@@ -1,0 +1,156 @@
+﻿@page
+@model VideojuegosStore.Pages.Cliente.IndexModel
+@{
+    ViewData["Title"] = "Juegos";
+}
+
+<div class="container mt-4">
+    <!-- Bienvenida + Sección Historial Compras -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="p-4 rounded shadow bg-white bg-opacity-75 text-dark">
+                <h1 class="mb-3"><i class="fas fa-user-circle me-2"></i>Bienvenido, @User.Identity.Name!</h1>
+
+         
+                    <!-- Puedes agregar más tarjetas aquí -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Catálogo de Videojuegos -->
+    <div class="mt-5">
+        <h2 class="mb-4"><i class="fas fa-gamepad me-2"></i>Catálogo de Videojuegos</h2>
+
+        <!-- Filtros -->
+
+        <!-- Contenedor Videojuegos -->
+        <div id="loadingSpinner" class="text-center my-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="mt-2">Cargando catálogo...</p>
+        </div>
+
+        <div id="videojuegosContainer" class="row"></div>
+
+        <!-- Mensaje cuando no hay resultados -->
+        <div id="sinResultados" class="text-center mt-5 d-none">
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                No se encontraron videojuegos con los filtros aplicados
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body {
+            background: url('/images/fondo-videojuegos.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+
+        .bg-opacity-75 {
+            background-color: rgba(0, 0, 0, 0.75) !important;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            cargarVideojuegos();
+
+            $('#btnFiltrar').click(cargarVideojuegos);
+            $('#filtroBusqueda').keyup(function (e) {
+                if (e.keyCode === 13) cargarVideojuegos();
+            });
+        });
+
+                function cargarVideojuegos() {
+            const filtros = {
+                titulo: $('#filtroBusqueda').val(),
+                plataforma: $('#filtroPlataforma').val(),
+                genero: $('#filtroGenero').val()
+            };
+
+            $('#loadingSpinner').show();
+            $('#videojuegosContainer').empty();
+            $('#sinResultados').addClass('d-none');
+
+            $.ajax({
+                url: '/api/Videojuegos',
+                type: 'GET',
+                data: filtros,
+                success: function (data) {
+                    $('#loadingSpinner').hide();
+
+                    if (data.length === 0) {
+                        $('#sinResultados').removeClass('d-none');
+                        return;
+                    }
+
+                    data.forEach(function (videojuego) {
+                        const cardHtml = `
+                            <div class="col-md-4 mb-4">
+                                <div class="card h-100 shadow-sm">
+                                    <div class="position-relative">
+                                        <img src="${videojuego.imagenUrl || '/images/placeholder.png'}"
+                                             class="card-img-top"
+                                             alt="${videojuego.titulo}"
+                                             style="height: 250px; object-fit: cover;">
+                                        ${videojuego.stock <= 0 ?
+                            '<span class="badge bg-danger position-absolute top-0 start-0 m-2">AGOTADO</span>' :
+                            '<span class="badge bg-success position-absolute top-0 start-0 m-2">DISPONIBLE</span>'}
+                                    </div>
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">${videojuego.titulo}</h5>
+                                        <div class="card-text mb-2">
+                                            <span class="badge bg-info text-dark me-1">${videojuego.plataforma}</span>
+                                            <span class="badge bg-secondary">${videojuego.genero}</span>
+                                        </div>
+                                        <p class="card-text">
+                                            <strong>Precio:</strong> $${videojuego.precio.toFixed(2)}
+                                        </p>
+                                   ${videojuego.stock > 0 ?
+        `<div class="d-grid gap-2">
+            <a href="/FacturaQR/${videojuego.id}" class="btn btn-success">
+                <i class="fas fa-qrcode me-1"></i> Comprar con QR
+            </a>
+            <a href="/Cliente/Compras/Create?videojuegoId=${videojuego.id}" class="btn btn-primary">
+                <i class="fas fa-shopping-cart me-1"></i> Comprar Ahora
+            </a>
+            <a href="/Cliente/Resena/Create/${videojuego.id}" class="btn btn-info">
+                <i class="fas fa-star me-1"></i> Dejar reseña
+            </a>
+        </div>` :
+        `<button class="btn btn-outline-secondary w-100" disabled>
+            No disponible
+        </button>`}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        $('#videojuegosContainer').append(cardHtml);
+                    });
+                },
+                error: function (error) {
+                    $('#loadingSpinner').hide();
+                    console.error('Error al cargar:', error);
+                    $('#videojuegosContainer').html(`
+                        <div class="col-12">
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                Error al cargar el catálogo. Por favor, intente nuevamente.
+                            </div>
+                        </div>
+                    `);
+                }
+            });
+        }
+    </script>
+}

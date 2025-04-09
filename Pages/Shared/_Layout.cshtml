@@ -1,0 +1,165 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - VideojuegosStore</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/VideojuegosStore.styles.css" asp-append-version="true" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Times+New+Roman&display=swap" rel="stylesheet">
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <!-- Sidebar interactivo -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <a class="navbar-brand" asp-area="">
+                <i class="fas fa-gamepad"></i> <span class="brand-text">VideojuegosStore</span>
+            </a>
+            <button class="toggle-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <ul class="sidebar-menu">
+            <li>
+                <a class="nav-link" asp-area="" asp-page="/Index">
+                    <i class="fas fa-home"></i> <span class="link-text">Home</span>
+                </a>
+            </li>
+
+            @if (Context.Session.GetString("UserRole") == "Administrador")
+            {
+                <!-- Menú para Administrador -->
+                <li>
+                    <a class="nav-link" asp-page="/Administrador/Index">
+                        <i class="fas fa-user-shield"></i> <span class="link-text">Panel Admin</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link" asp-page="/Administrador/Usuarios">
+                        <i class="fas fa-users-cog"></i> <span class="link-text">Usuarios</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link" asp-page="/Administrador/Videojuegos">
+                        <i class="fas fa-gamepad"></i> <span class="link-text">Videojuegos</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link" asp-page="/Administrador/Resena/Index">
+                        <i class="fas fa-comment-alt"></i> <span class="link-text">Reseñas</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link" asp-page="/Administrador/Compras/Index">
+                        <i class="fas fa-shopping-cart"></i> <span class="link-text">Compras</span>
+                    </a>
+                </li>
+            }
+            else if (Context.Session.GetString("UserRole") == "Cliente")
+            {
+                <!-- Menú para Cliente -->
+                <li>
+                    <a class="nav-link" asp-page="/Cliente/Index">
+                        <i class="fas fa-user"></i> <span class="link-text">Mi Perfil</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link" asp-page="/Cliente/Juegos">
+                        <i class="fas fa-gamepad"></i> <span class="link-text">Mis Juegos</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link" asp-page="/Cliente/Compras/Index">
+                        <i class="fas fa-shopping-basket"></i> <span class="link-text">Mis Compras</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-link" asp-page="/Cliente/Resena/Index">
+                        <i class="fas fa-star"></i> <span class="link-text">Mis Reseñas</span>
+                    </a>
+                </li>
+            }
+
+            <li>
+                <a class="nav-link" asp-area="" asp-page="/Privacy">
+                    <i class="fas fa-shield-alt"></i> <span class="link-text">Privacy</span>
+                </a>
+            </li>
+
+            @if (Context.Session.GetString("UserRole") != null)
+            {
+                <li>
+                    <a href="/Login" class="nav-link logout">
+                        <i class="fas fa-sign-out-alt"></i> <span class="link-text">Salir</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="/Login" class="nav-link">
+                        <i class="fas fa-sign-in-alt"></i> <span class="link-text">Login</span>
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="main-content">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Footer gamer -->
+    <footer class="gamer-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <span class="neon-text">&copy; 2025 VideojuegosStore</span>|
+                    <span class="creator-name">Darlyn Cela</span> |
+                </div>
+                <div class="footer-section">
+                    <a asp-area="" asp-page="/Privacy" class="footer-link">
+                        <i class="fas fa-shield-alt"></i> Política de Privacidad
+                    </a>
+                </div>
+                <div class="footer-section social-icons">
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        // Script para el sidebar colapsable
+        $(document).ready(function(){
+            $('.toggle-btn').click(function(){
+                $('.sidebar').toggleClass('collapsed');
+                $('.main-content').toggleClass('expanded');
+
+                // Cambiar ícono
+                if($('.sidebar').hasClass('collapsed')){
+                    $('.toggle-btn i').removeClass('fa-times').addClass('fa-bars');
+                } else {
+                    $('.toggle-btn i').removeClass('fa-bars').addClass('fa-times');
+                }
+            });
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

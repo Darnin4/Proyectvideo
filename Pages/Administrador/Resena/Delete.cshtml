@@ -1,0 +1,60 @@
+﻿@page "/Administrador/Resena/Delete/{id}"
+@model VideojuegosStore.Pages.Administrador.Resena.DeleteModel
+@{
+    ViewData["Title"] = "Eliminar Reseña";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-danger text-white">
+            <h3 class="mb-0"><i class="fas fa-trash-alt me-2"></i>@ViewData["Title"]</h3>
+        </div>
+        <div class="card-body">
+            <h4>¿Estás seguro que deseas eliminar esta reseña?</h4>
+
+            <dl class="row mt-4">
+                <dt class="col-sm-3">Videojuego:</dt>
+                <dd class="col-sm-9">@Model.Reseña.Videojuego.Titulo</dd>
+
+                <dt class="col-sm-3">Usuario:</dt>
+                <dd class="col-sm-9">@Model.Reseña.Usuario.Nombre</dd>
+
+                <dt class="col-sm-3">Calificación:</dt>
+                <dd class="col-sm-9">
+                    <div class="rating-display">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <i class="fas fa-star @(i <= Model.Reseña.Calificacion ? "text-warning" : "text-secondary")"></i>
+                        }
+                    </div>
+                </dd>
+
+                <dt class="col-sm-3">Comentario:</dt>
+                <dd class="col-sm-9">@Model.Reseña.Comentario</dd>
+
+                <dt class="col-sm-3">Fecha:</dt>
+                <dd class="col-sm-9">@Model.Reseña.Fecha.ToString("dd/MM/yyyy")</dd>
+            </dl>
+
+            <form method="post">
+                <input type="hidden" asp-for="Reseña.Id" />
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-danger me-2">
+                        <i class="fas fa-trash me-1"></i> Eliminar definitivamente
+                    </button>
+                    <a href="/Administrador/Resena" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-1"></i> Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .rating-display {
+            font-size: 1.2rem;
+        }
+    </style>
+}

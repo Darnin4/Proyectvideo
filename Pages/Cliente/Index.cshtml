@@ -1,0 +1,55 @@
+﻿@page
+@model VideojuegosStore.Pages.Cliente.IndexModel
+@{
+    ViewData["Title"] = "Bienvenido Cliente";
+}
+
+<div class="client-container">
+    <h1 class="client-title">
+        <i class="fas fa-user-astronaut me-3"></i>@ViewData["Title"]
+    </h1>
+
+    <div class="row mt-5 g-4">
+        <div class="col-md-6 col-lg-4">
+            <div class="card client-card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">
+                        <i class="fas fa-id-card me-3"></i>Mis Datos
+                    </h5>
+                    <p class="card-text">Administra y actualiza tu información personal, dirección y preferencias de contacto.</p>
+                    <a href="/Cliente/MiPerfil" class="btn client-btn">
+                        <i class="fas fa-user-edit me-2"></i>Ver Mi Perfil
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card client-card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">
+                        <i class="fas fa-gamepad me-3"></i>Mis Juegos
+                    </h5>
+                    <p class="card-text">Revisa tu biblioteca de juegos y tus compras recientes.</p>
+                    <a href="/Cliente/Juegos" class="btn client-btn">
+                        <i class="fas fa-arrow-right me-2"></i>Ver Juegos
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card client-card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">
+                        <i class="fas fa-trophy me-3"></i>Logros
+                    </h5>
+                    <p class="card-text">Consulta tus logros y progreso en los juegos.</p>
+                    <a href="#" class="btn client-btn">
+                        <i class="fas fa-arrow-right me-2"></i>Ver Logros
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,79 @@
+﻿@page
+@model VideojuegosStore.Pages.Cliente.MiPerfilModel
+@{
+    ViewData["Title"] = "Mi Perfil";
+}
+
+<div class="profile-container">
+    @if (Model.Usuario != null)
+    {
+        <h1 class="profile-title">
+            <i class="fas fa-user-circle me-3"></i>@ViewData["Title"]
+        </h1>
+
+        <form method="post">
+            <div class="mb-4">
+                <label class="form-label">
+                    <i class="fas fa-user me-3"></i>Nombre
+                </label>
+                <input asp-for="Usuario.Nombre" class="form-control" placeholder="Tu nombre completo" />
+                <span asp-validation-for="Usuario.Nombre" class="text-danger mt-2 d-block"></span>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">
+                    <i class="fas fa-envelope me-3"></i>Correo Electrónico
+                </label>
+                <input asp-for="Usuario.Correo" class="form-control" placeholder="tu@correo.com" />
+                <span asp-validation-for="Usuario.Correo" class="text-danger mt-2 d-block"></span>
+            </div>
+
+            <div class="mb-4 password-container">
+                <label class="form-label">
+                    <i class="fas fa-lock me-3"></i>Contraseña
+                </label>
+                <input name="Usuario.Contraseña" id="Usuario_Contraseña" type="password"
+                       class="form-control" value="@Model.Usuario.Contraseña" placeholder="••••••••" />
+                <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility()"></i>
+            </div>
+
+
+            <div class="btn-group mt-4">
+                <button type="submit" class="btn btn-save">
+                    <i class="fas fa-save me-2"></i>Guardar Cambios
+                </button>
+                <a href="/Cliente/Index" class="btn btn-cancel">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </a>
+            </div>
+        </form>
+    }
+    else
+    {
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle me-2"></i>No se pudo cargar tu perfil.
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById("Usuario_Contraseña");
+            const icon = document.querySelector(".toggle-password");
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                passwordField.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+    </script>
+}

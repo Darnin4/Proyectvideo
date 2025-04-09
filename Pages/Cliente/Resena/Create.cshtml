@@ -1,0 +1,81 @@
+﻿@page "/Cliente/Resena/Create/{videojuegoId}"
+@model VideojuegosStore.Pages.Cliente.Resena.CreateModel
+@{
+    ViewData["Title"] = "Crear Reseña";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title">
+                        <i class="fas fa-star me-2"></i>Crear Reseña para @Model.Videojuego.Titulo
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <input type="hidden" asp-for="Reseña.VideojuegoId" />
+
+                        <div class="mb-3">
+                            <label class="form-label">Calificación</label>
+                            <div class="rating">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <input type="radio" asp-for="Reseña.Calificacion" value="@i" id="rating-@i" />
+                                    <label for="rating-@i"><i class="fas fa-star"></i></label>
+                                }
+                            </div>
+                            <span asp-validation-for="Reseña.Calificacion" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Reseña.Comentario" class="form-label">Comentario</label>
+                            <textarea asp-for="Reseña.Comentario" class="form-control" rows="5"></textarea>
+                            <span asp-validation-for="Reseña.Comentario" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-page="/Cliente/Index" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-arrow-left me-1"></i> Volver
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> Guardar Reseña
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <style>
+        .rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+
+            .rating > input {
+                display: none;
+            }
+
+            .rating > label {
+                position: relative;
+                width: 1.1em;
+                font-size: 2rem;
+                color: #ddd;
+                cursor: pointer;
+            }
+
+                .rating > label:hover,
+                .rating > label:hover ~ label,
+                .rating > input:checked ~ label {
+                    color: gold;
+                }
+    </style>
+}
